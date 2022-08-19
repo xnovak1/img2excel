@@ -1,2 +1,2 @@
 # img2excel
-Script that converts an image to excel spreadsheet.
+Useless cript that converts an image to excel spreadsheet.
