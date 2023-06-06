@@ -11,7 +11,7 @@ Pixel = Tuple[int, int, int]
 COL_WIDTH = DEFAULT_COLUMN_WIDTH / 3
 
 
-def create_excel(img, save_fp: str) -> None:
+def create_excel(img, path: str) -> None:
     wb = Workbook()
     ws = wb.active
 
@@ -25,21 +25,29 @@ def create_excel(img, save_fp: str) -> None:
             ws[col_letter + str(i)].fill = PatternFill(fill_type="solid",
                                                        start_color=hex,
                                                        end_color=hex)
-    wb.save(save_fp)
+    wb.save(path)
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Copies image into"
-                                     "Excel file.")
-    parser.add_argument("image", help="Path to input image.")
+    parser = argparse.ArgumentParser(description="Creates an Excel sheet and copies an image into it.")
+    parser.add_argument("image_path", help="Path to input image.")
     args: Dict[str, str] = vars(parser.parse_args())
 
-    name: str = os.path.splitext(os.path.basename(args["image"]))[0] + ".xlsx"
+    name: str = os.path.splitext(os.path.basename(args["image_path"]))[0] + ".xlsx"
 
-    with Image.open(args["image"]) as img:
-        rgb_img = img.convert("RGB")
+    try:
+        with Image.open(args["image_path"]) as img:
+            rgb_img = img.convert("RGB")
+    except FileNotFoundError:
+        print(f"Image with name \"{args['image_path']}\" doesn't exist in the current diectory.")
+        return
+
+    print("Copying image ...\n")
 
     create_excel(rgb_img, name)
+
+    print(f"Created file \"{name}\" in the current directory.")
+    print("Image copied succesfully!")
 
 
 if __name__ == "__main__":
